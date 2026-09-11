@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原生API看板 - 适合截图的版本</title>
+    <style>
+        /* 与之前完全相同的样式，仅新增 print/screenshot 优化 */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: #f4f7fc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1e2a3e;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 { font-size: 1.9rem; background: linear-gradient(135deg, #1f6e43, #2b8c5e); background-clip: text; -webkit-background-clip: text; color: transparent; }
+        .badge-tip { background: #fff3e0; border-left: 5px solid #f0a500; padding: 0.8rem 1.2rem; border-radius: 16px; margin-bottom: 2rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.6rem; margin-bottom: 2rem; }
+        .card { background: white; border-radius: 28px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #eef2f5; overflow: hidden; }
+        .card-header { padding: 1rem 1.4rem 0.5rem; border-bottom: 2px solid #eef2f5; }
+        .api-name { font-size: 1.3rem; font-weight: 700; font-family: monospace; color: #0f3b2c; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline; }
+        .replace-badge { background: #f3f5f7; font-size: 0.7rem; padding: 0.2rem 0.7rem; border-radius: 40px; font-family: system-ui; }
+        .code-block { background: #1e2a32; margin: 1rem 1.2rem; border-radius: 18px; padding: 0.8rem 1rem; font-family: monospace; font-size: 0.75rem; color: #e2e8f0; overflow-x: auto; white-space: pre-wrap; }
+        .compat-section { padding: 0.8rem 1.2rem 1rem; background: #fafcff; border-top: 1px solid #ecf3f9; }
+        .compat-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; font-size: 0.75rem; }
+        .compat-item { background: #f0f4f9; border-radius: 30px; padding: 0.2rem 0.7rem; }
+        .warn { background: #fff1e0; color: #b65c00; border-radius: 20px; padding: 0.1rem 0.7rem; display: inline-block; font-size: 0.7rem; margin-top: 6px; }
+        .extra-tips { background: #fffef7; border-radius: 32px; padding: 1.5rem; margin-top: 1rem; border: 1px solid #e9e2cf; }
+        .tips-list { display: flex; flex-wrap: wrap; gap: 0.8rem; list-style: none; margin-top: 0.8rem; }
+        .tips-list li { background: #f3f7f4; border-radius: 40px; padding: 0.4rem 1rem; font-size: 0.8rem; flex: 1 1 220px; }
+        footer { text-align: center; margin-top: 2rem; font-size: 0.75rem; color: #6a7d8e; }
+        @media print {
+            body { background: white; padding: 0.5cm; }
+            .card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+            .badge-tip, .extra-tips { background: #f9f9f9; border: 1px solid #ddd; }
+            .code-block { background: #f0f0f0; color: black; }
+            .compat-item { background: #ececec; }
+            .header h1 { color: #1f6e43; background: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📦 原生 API 看板 · 告别无用 npm 包袱</h1>
+        <p style="margin-top: 0.5rem;">现代浏览器 & 手机端原生能力 —— 更轻 · 更快 · 更安全</p>
+    </div>
+    <div class="badge-tip">
+        💡 核心建议：在引入新依赖之前，优先查阅 <strong>MDN / Can I Use</strong>。<br>
+        下方 9 大常用场景 + 额外技巧，原生 API 完全够用，大幅降低项目体积与维护成本。
+    </div>
+    <div class="grid">
+        <!-- 卡片1：Intl.DateTimeFormat -->
+        <div class="card"><div class="card-header"><div class="api-name">Intl.DateTimeFormat <span class="replace-badge">← 替代 Moment.js</span></div><div class="desc">国际化日期/时间格式化</div></div><div class="code-block"><code>new Intl.DateTimeFormat('zh-CN', { dateStyle: 'full' }).format(new Date())</code></div><div class="compat-section"><div class="compat-grid"><span class="compat-item">Chrome/Android 24+</span><span class="compat-item">Edge 12+</span><span class="compat-item">Firefox 29+</span><span class="compat-item">Safari/iOS 10+</span></div></div></div>
+        <!-- 2: crypto.randomUUID -->
+        <div class="card"><div class="card-header"><div class="api-name">crypto.randomUUID() <span class="replace-badge">← 替代 uuid</span></div><div class="desc">生成 v4 UUID</div></div><div class="code-block"><code>const id = crypto.randomUUID();  // "a1b2c3d4-..."</code></div><div class="compat-section"><div class="compat-grid"><span class="compat-item">Chrome ≥92</span><span class="compat-item">Edge ≥92</span><span class="compat-item">Firefox ≥95</span><span class="compat-item">Safari/iOS ≥15.4</span></div></div></div>
+        <!-- 3: Optional Chaining -->
+        <div class="card"><div class="card-header"><div class="api-name">Optional Chaining ?. <span class="replace-badge">← 替代 lodash get</span></div><div class="desc">安全访问深层属性</div></div><div class="code-block"><code>const city = user?.address?.city ?? '未知';</code></div><div class="compat-section"><div class="compat-grid"><span class="compat-item">Chrome ≥80</span><span class="compat-item">Edge ≥80</span><span class="compat-item">Firefox ≥74</span><span class="compat-item">Safari/iOS ≥13.4</span></div></div></div>
+        <!-- 4: URLSearchParams -->
+        <div class="card"><div class="card-header"><div class="api-name">URLSearchParams <span class="replace-badge">← 替代 query-string</span></div><div class="desc">解析 & 构建查询参数</div></div><div class="code-block"><code>new URLSearchParams(location.search).get('id')</code></div><div class="compat-section"><div class="compat-grid"><span class="compat-item">Chrome ≥49</span><span class="compat-item">Edge ≥17</span><span class="compat-item">Firefox ≥44</span><span class="compat-item">Safari/iOS ≥10.3</span></div></div></div>
+        <!-- 5: fetch -->
+        <div class="card"><div class="card-header"><div class="api-name">fetch() <span class="replace-badge">← 替代 axios</span></div><div class="desc">现代 HTTP 请求</div></div><div class="code-block"><code>const res = await fetch('/api'); const data = await res.json();</code></div><div class="compat-section"><div class="compat-grid"><span class="compat-item">Chrome ≥40</span><span class="compat-item">Edge ≥14</span><span class="compat-item">Firefox ≥39</span><span class="compat-item">Safari/iOS ≥10.3</span></div></div></div>
+        <!-- 6: structuredClone -->
+        <div class="card"><div class="card-header"><div class="api-name">structuredClone() <span class="replace-badge">← 替代 cloneDeep</span></div><div class="desc">深拷贝（支持循环引用）</div></div><div class="code-block"><code>const copy = structuredClone(original);</code></div><div class="compat-section"><div class="compat-grid"><span class="compat-item">Chrome ≥98</span><span class="compat-item">Edge ≥98</span><span class="compat-item">Firefox ≥94</span><span class="compat-item">Safari/iOS ≥15.4</span></div><div class="warn">⚠️ 不能克隆函数/DOM节点</div></div></div>
+        <!-- 7: AbortController -->
+        <div class="card"><div class="card-header"><div class="api-name">AbortController <span class="replace-badge">← 替代请求取消库</span></div><div class="desc">取消 fetch / 超时控制</div></div><div class="code-block"><code>const ctrl = new AbortController(); fetch(url, { signal: ctrl.signal }); ctrl.abort();</code></div><div class="compat-section"><div class="compat-grid"><span class="compat-item">Chrome ≥66</span><span class="compat-item">Edge ≥16</span><span class="compat-item">Firefox ≥57</span><span class="compat-item">Safari/iOS ≥12.2</span></div></div></div>
+        <!-- 8: IntersectionObserver -->
+        <div class="card"><div class="card-header"><div class="api-name">IntersectionObserver <span class="replace-badge">← 替代滚动/懒加载库</span></div><div class="desc">高性能监听元素可见性</div></div><div class="code-block"><code>new IntersectionObserver(entries => { ... }).observe(el);</code></div><div class="compat-section"><div class="compat-grid"><span class="compat-item">Chrome ≥51</span><span class="compat-item">Edge ≥15</span><span class="compat-item">Firefox ≥55</span><span class="compat-item">Safari/iOS ≥12.2</span></div></div></div>
+        <!-- 9: clipboard -->
+        <div class="card"><div class="card-header"><div class="api-name">navigator.clipboard <span class="replace-badge">← 替代 clipboard.js</span></div><div class="desc">复制文本到剪贴板</div></div><div class="code-block"><code>await navigator.clipboard.writeText('复制内容');</code></div><div class="compat-section"><div class="compat-grid"><span class="compat-item">Chrome ≥66</span><span class="compat-item">Edge ≥79</span><span class="compat-item">Firefox ≥63</span><span class="compat-item">Safari/iOS ≥13.4</span></div><div class="warn">🔒 需要 HTTPS + 用户手势</div></div></div>
+    </div>
+    <div class="extra-tips">
+        <h3>✨ 更多原生锦囊 · 进一步减少依赖</h3>
+        <ul class="tips-list">
+            <li>📌 <strong>replaceAll</strong> → 替代第三方字符替换库 (<code>'aaab'.replaceAll('a','b')</code>)</li>
+            <li>📌 <strong>Array.at()</strong> → 取倒数第N项 (<code>arr.at(-1)</code>)</li>
+            <li>📌 <strong>Object.hasOwn()</strong> → 更安全的 hasOwnProperty</li>
+            <li>📌 <strong>Promise.withResolvers</strong> → 简化外部 Promise 控制</li>
+            <li>📌 <strong>String.prototype.padStart</strong> → 替代 left-pad 库</li>
+        </ul>
+        <hr>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+            <div style="flex:1; background:#eef3fa; border-radius: 20px; padding: 0.6rem;"><strong>📱 iOS Safari 特别注意</strong><br>clipboard 必须用户点击 + HTTPS；旧版 iOS 13.4 以下不支持 randomUUID / structuredClone，可做降级。</div>
+            <div style="flex:1; background:#eef3fa; border-radius: 20px; padding: 0.6rem;"><strong>⚡ Node.js 后端同样可用</strong><br>Node 18+ 原生支持 fetch, AbortController, 20+ 支持 structuredClone。</div>
+            <div style="flex:1; background:#eef3fa; border-radius: 20px; padding: 0.6rem;"><strong>🧠 深拷贝与 JSON 的陷阱</strong><br>JSON 丢失 Date/RegExp，且无法处理循环引用 → 用 structuredClone 更可靠。</div>
+        </div>
+    </div>
+    <footer>🧩 兼容性数据基于 MDN & Can I Use (2025-2026)。现代移动端及桌面浏览器均已稳定支持。<br>📌 打开此页面后按 F12 → 截图工具 或 Ctrl+Shift+S 即可截取高清看板。</footer>
+</div>
+</body>
+</html>
